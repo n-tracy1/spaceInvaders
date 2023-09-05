@@ -33,9 +33,9 @@ def gameOver(win, clock, main_func):
     while True:
         clock.tick(60)
         event = pygame.event.wait()
-        print("Checking python event: ", event)
+        # print("Checking python event: ", event)
         if event.type == pygame.QUIT:
-            print("event is pygame.QUIT")
+            # print("event is pygame.QUIT")
             break
         elif event.type == pygame.MOUSEBUTTONDOWN:
             mouse = pygame.mouse.get_pos()

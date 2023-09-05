@@ -1,12 +1,10 @@
 import pygame
 import time
-import random
 
 from windowDrawing.draw import draw
 from windowDrawing.gameOver import gameOver
 from windowDrawing.bulletMovement import moveBullets
 from windowDrawing.alienBulletMovement import alienFireBullets
-from utils.font import font
 from utils import width, height
 from windowDrawing import bulletWidth, bulletHeight, alienWidth, alienHeight
 
@@ -33,7 +31,7 @@ def main():
     clock = pygame.time.Clock()
     startTime = time.time()
     bulletCounter = 0
-    bulletLimit = 500
+    bulletLimit = 750
     elapsedTime = 0
 
     aliens = []  
@@ -42,9 +40,6 @@ def main():
   
     hit = False
 
-    # Make aliens:
-        ### loop through columns and rows to make aliens 
-        ### keep one full gap between each alien both vertically and horizontally
     alienRowStartY = 40
     alienRowStartX = 120
     increment = 80
@@ -63,24 +58,13 @@ def main():
         rowIndex += increment
 
     while run:
-        # starCount += clock.tick(60)
-        bulletCounter += clock.tick(60)
+        bulletCounter += clock.tick(30)
         elapsedTime = time.time() - startTime
 
         for event in pygame.event.get():
             if event.type == pygame.QUIT:
                 run = False
                 break
-
-        # Create star objects
-        # if starCount > starAddIncrement:
-        #     for _ in range(3):
-        #         starX = random.randint(0, width - starWidth)
-        #         star = pygame.Rect(starX, -starHeight, starWidth, starHeight) # star starts off the top of the screen
-        #         stars.append(star)
-        
-        #     starAddIncrement = max(200, starAddIncrement - 50)
-        #     starCount = 0
 
         # Move player
         keys = pygame.key.get_pressed()
@@ -97,18 +81,6 @@ def main():
         moveBullets(bullets, aliens)
         hit = alienFireBullets(alienBullets, aliens, player)
 
-
-        # Move stars down the screen
-        # for star in stars[:]:
-        #     if star.y < height:
-        #         star.y += 5
-        #     else:
-        #         stars.remove(star)
-        #     if star.y + height >= player.y and star.colliderect(player):
-        #         stars.remove(star)
-        #         hit = True
-        #         break
-            
         if hit == True:
             break
 

@@ -3,9 +3,10 @@ import random
 from windowDrawing import bulletWidth, bulletHeight, alienWidth
 
 def alienFireBullets(bullets, aliens, player):
+    
     for column in aliens[:]:
         for alien in column[:]:
-            if random.randint(1, 500) == 1:
+            if random.randint(1, 2500) == 1:
                 bullet = pygame.Rect((alien.x + alien.x + alienWidth)/2, alien.y, bulletWidth, bulletHeight)
                 bullets.append(bullet)
 
