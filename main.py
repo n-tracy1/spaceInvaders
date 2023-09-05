@@ -5,6 +5,7 @@ from windowDrawing.draw import draw
 from windowDrawing.gameOver import gameOver
 from windowDrawing.bulletMovement import moveBullets
 from windowDrawing.alienBulletMovement import alienFireBullets
+from windowDrawing.moveAliens import moveAliens
 from utils import width, height
 from windowDrawing import bulletWidth, bulletHeight, alienWidth, alienHeight
 
@@ -32,6 +33,7 @@ def main():
     startTime = time.time()
     bulletCounter = 0
     bulletLimit = 750
+    alienMoveCounter = 0
     elapsedTime = 0
 
     aliens = []  
@@ -47,6 +49,9 @@ def main():
     rowIndex = alienRowStartY
     columnIndex = alienRowStartX
     
+    alienMovement = 2
+    alienDirection = "right"
+
     while rowIndex < 360:
         newColumn = []
         while columnIndex < 880:
@@ -59,6 +64,7 @@ def main():
 
     while run:
         bulletCounter += clock.tick(30)
+        alienMoveCounter += 30
         elapsedTime = time.time() - startTime
 
         for event in pygame.event.get():
@@ -80,6 +86,21 @@ def main():
 
         moveBullets(bullets, aliens)
         hit = alienFireBullets(alienBullets, aliens, player)
+
+        print('elapsedTime: ', alienMoveCounter)
+        if alienMoveCounter > 1000:
+            alienMoveCounter = 0
+            if alienMovement < 4:
+                alienMovement += 1
+                moveAliens(aliens, alienDirection)
+            elif alienDirection == "right":
+                alienMovement = 1
+                alienDirection = "left"
+                moveAliens(aliens, alienDirection)
+            else:
+                alienMovement = 1
+                alienDirection = "right"
+                moveAliens(aliens, alienDirection)
 
         if hit == True:
             break
