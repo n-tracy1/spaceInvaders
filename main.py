@@ -33,7 +33,8 @@ def main():
     startTime = time.time()
     bulletCounter = 0
     bulletLimit = 750
-    alienMoveCounter = 0
+    alienMoveCounterSideways = 0
+    alienMoveCounterVertical = 0
     elapsedTime = 0
 
     aliens = []  
@@ -64,7 +65,8 @@ def main():
 
     while run:
         bulletCounter += clock.tick(30)
-        alienMoveCounter += 30
+        alienMoveCounterSideways += 30
+        alienMoveCounterVertical += 30
         elapsedTime = time.time() - startTime
 
         for event in pygame.event.get():
@@ -87,9 +89,8 @@ def main():
         moveBullets(bullets, aliens)
         hit = alienFireBullets(alienBullets, aliens, player)
 
-        print('elapsedTime: ', alienMoveCounter)
-        if alienMoveCounter > 1000:
-            alienMoveCounter = 0
+        if alienMoveCounterSideways > 1000:
+            alienMoveCounterSideways = 0
             if alienMovement < 4:
                 alienMovement += 1
                 moveAliens(aliens, alienDirection)
@@ -101,6 +102,9 @@ def main():
                 alienMovement = 1
                 alienDirection = "right"
                 moveAliens(aliens, alienDirection)
+        if alienMoveCounterVertical > 5000:
+            alienMoveCounterVertical = 0
+            moveAliens(aliens, "down")
 
         if hit == True:
             break

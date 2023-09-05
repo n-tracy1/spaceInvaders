@@ -2,9 +2,19 @@ import pygame
 
 def moveAliens(aliens, direction):
     if direction == "right":
-        moveDistance = 20
+        moveHorizontal(aliens, 20)
+    elif direction == "left":
+        moveHorizontal(aliens, -20)
     else:
-        moveDistance = -20
+        moveVertical(aliens, 40)
+    
+    
+def moveHorizontal(aliens, distance):
     for column in aliens[:]:
         for alien in column[:]: 
-            alien.x += moveDistance
+            alien.x += distance
+
+def moveVertical(aliens, distance):
+    for column in aliens[:]:
+        for alien in column[:]: 
+            alien.y += distance
