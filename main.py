@@ -1,9 +1,15 @@
 import pygame
 import time
 import random
-pygame.font.init()
 
-width, height = 1000, 800
+from windowDrawing.draw import draw
+from windowDrawing.gameOver import gameOver
+from windowDrawing.bulletMovement import moveBullets
+from windowDrawing.alienBulletMovement import alienFireBullets
+from utils.font import font
+from utils import width, height
+from windowDrawing import bulletWidth, bulletHeight, alienWidth, alienHeight
+
 win = pygame.display.set_mode((width, height))
 pygame.display.set_caption("Space Invaders")
 
@@ -13,47 +19,52 @@ playerWidth = 40
 playerHeight = 60
 
 playerVelocity = 5
-starWidth = 10
-starHeight = 20
-
-font = pygame.font.SysFont("comicsans", 30)
 
 # Button colors
 color = (255,255,255)
 color_light = (170,170,170)
 color_dark = (100,100,100)
 
-def draw(player, elapsedTime, stars):
-    win.blit(background, (0, 0))
-
-    time_text = font.render(f"Time: {round(elapsedTime)}s", 1, "white")
-    win.blit(time_text, (10, 10))
-
-    pygame.draw.rect(win, "red", player)
-    
-    for star in stars:
-        pygame.draw.rect(win, "white", star)
-
-    pygame.display.update()
-
 def main():
-    run = True
+    run = True 
 
-    player = pygame.Rect(200, height - playerHeight, playerWidth, playerHeight)
+    player = pygame.Rect(480, height - playerHeight - 20, playerWidth, playerHeight)
 
     clock = pygame.time.Clock()
     startTime = time.time()
+    bulletCounter = 0
+    bulletLimit = 500
     elapsedTime = 0
 
-    starAddIncrement = 2000
-    starCount = 0
-
-    stars = []  
+    aliens = []  
+    bullets = []
+    alienBullets = []
   
     hit = False
 
+    # Make aliens:
+        ### loop through columns and rows to make aliens 
+        ### keep one full gap between each alien both vertically and horizontally
+    alienRowStartY = 40
+    alienRowStartX = 120
+    increment = 80
+
+    rowIndex = alienRowStartY
+    columnIndex = alienRowStartX
+    
+    while rowIndex < 360:
+        newColumn = []
+        while columnIndex < 880:
+            alien = pygame.Rect(columnIndex, rowIndex, alienWidth, alienHeight)
+            newColumn.append(alien)
+            columnIndex += increment
+        columnIndex = alienRowStartX
+        aliens.append(newColumn)
+        rowIndex += increment
+
     while run:
-        starCount += clock.tick(60)
+        # starCount += clock.tick(60)
+        bulletCounter += clock.tick(60)
         elapsedTime = time.time() - startTime
 
         for event in pygame.event.get():
@@ -61,46 +72,51 @@ def main():
                 run = False
                 break
 
-        if starCount > starAddIncrement:
-            for _ in range(3):
-                starX = random.randint(0, width - starWidth)
-                star = pygame.Rect(starX, -starHeight, starWidth, starHeight) # star starts off the top of the screen
-                stars.append(star)
+        # Create star objects
+        # if starCount > starAddIncrement:
+        #     for _ in range(3):
+        #         starX = random.randint(0, width - starWidth)
+        #         star = pygame.Rect(starX, -starHeight, starWidth, starHeight) # star starts off the top of the screen
+        #         stars.append(star)
         
-            starAddIncrement = max(200, starAddIncrement - 50)
-            starCount = 0
+        #     starAddIncrement = max(200, starAddIncrement - 50)
+        #     starCount = 0
 
+        # Move player
         keys = pygame.key.get_pressed()
         if keys[pygame.K_LEFT] and player.x > 0:
-                player.x -=  playerVelocity
+            player.x -= playerVelocity
         elif keys[pygame.K_RIGHT] and player.x < width - playerWidth:
-                player.x += playerVelocity  
-        
-        for star in stars[:]:
-            if star.y < height:
-                star.y += 2
-            else:
-                stars.remove(star)
-            if star.y + height >= player.y and star.colliderect(player):
-                 stars.remove(star)
-                 hit = True
-                 break
+            player.x += playerVelocity  
+        # Make bullets
+        if keys[pygame.K_SPACE] and bulletCounter >= bulletLimit:
+            bullet = pygame.Rect((player.x + player.x + playerWidth)/2, player.y, bulletWidth, bulletHeight)
+            bullets.append(bullet)
+            bulletCounter = 0
+
+        moveBullets(bullets, aliens)
+        hit = alienFireBullets(alienBullets, aliens, player)
+
+
+        # Move stars down the screen
+        # for star in stars[:]:
+        #     if star.y < height:
+        #         star.y += 5
+        #     else:
+        #         stars.remove(star)
+        #     if star.y + height >= player.y and star.colliderect(player):
+        #         stars.remove(star)
+        #         hit = True
+        #         break
             
-
         if hit == True:
-            lostText = font.render('you lost!', 1, "white")
-            win.blit(lostText, (width/2 - lostText.get_width()/2, height/2 - lostText.get_height()/2))
-            pygame.display.update()
-            pygame.time.delay(4000)
             break
-            #  run = False
 
-        draw(player, elapsedTime, stars)
+        draw(win, player, elapsedTime, aliens, bullets, alienBullets)
       
-    # Add restart button/exit button here
-    # pygame.event.wait()
-
+    gameOver(win, clock, main)
     pygame.quit()
+
 
 if __name__ == "__main__":
     main()
