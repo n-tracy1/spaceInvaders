@@ -3,10 +3,10 @@ from utils.font import font
 
 background = pygame.image.load("space.jpg")
 
-def draw(win, player, elapsedTime, aliens, bullets, alienBullets):
+def draw(win, player, playerInfo, aliens, bullets, alienBullets):
     win.blit(background, (0, 0))
 
-    time_text = font.render(f"Time: {round(elapsedTime)}s", 1, "white")
+    time_text = font.render(f"Score: {playerInfo['score']}", 1, "white")
     win.blit(time_text, (10, 10))
 
     pygame.draw.rect(win, "red", player)

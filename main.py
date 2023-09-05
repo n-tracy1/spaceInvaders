@@ -37,6 +37,11 @@ def main():
     alienMoveCounterVertical = 0
     elapsedTime = 0
 
+    playerInfo = {
+        "score": 0,
+        "alienCount": 0
+    }
+
     aliens = []  
     bullets = []
     alienBullets = []
@@ -58,6 +63,7 @@ def main():
         while columnIndex < 880:
             alien = pygame.Rect(columnIndex, rowIndex, alienWidth, alienHeight)
             newColumn.append(alien)
+            playerInfo["alienCount"] += 1
             columnIndex += increment
         columnIndex = alienRowStartX
         aliens.append(newColumn)
@@ -86,7 +92,7 @@ def main():
             bullets.append(bullet)
             bulletCounter = 0
 
-        moveBullets(bullets, aliens)
+        moveBullets(bullets, aliens, playerInfo)
         hit = alienFireBullets(alienBullets, aliens, player)
 
         if alienMoveCounterSideways > 1000:
@@ -109,7 +115,10 @@ def main():
         if hit == True:
             break
 
-        draw(win, player, elapsedTime, aliens, bullets, alienBullets)
+        draw(win, player, playerInfo, aliens, bullets, alienBullets)
+
+        if playerInfo["alienCount"] == 0:
+            break
       
     gameOver(win, clock, main)
     pygame.quit()
